@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Para el amor de mi vida ❤️</title>
+
+<style>
+/* =====================================================
+   CONFIGURACIÓN GENERAL
+===================================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --rosa: #ff4f81;
+    --rosa-claro: #ff8fab;
+    --rojo: #e63963;
+    --fondo: #fff0f5;
+    --blanco: #ffffff;
+    --texto: #542033;
+    --sombra: rgba(180, 30, 80, .18);
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background:
+        radial-gradient(circle at top left, #ffd6e5, transparent 35%),
+        radial-gradient(circle at bottom right, #ffc2d8, transparent 35%),
+        var(--fondo);
+    color: var(--texto);
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* =====================================================
+   CORAZONES DE FONDO
+===================================================== */
+.hearts {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.heart {
+    position: absolute;
+    bottom: -50px;
+    font-size: 22px;
+    animation: subir linear forwards;
+    opacity: .65;
+}
+
+@keyframes subir {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 0;
+    }
+    20% {
+        opacity: .7;
+    }
+    100% {
+        transform: translateY(-110vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* =====================================================
+   PANTALLAS
+===================================================== */
+.screen {
+    display: none;
+    min-height: 100vh;
+    position: relative;
+    z-index: 2;
+    padding: 30px 15px;
+}
+
+.screen.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.container {
+    width: 100%;
+    max-width: 900px;
+    text-align: center;
+}
+
+/* =====================================================
+   ANIMACIÓN GENERAL
+===================================================== */
+@keyframes aparecer {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* =====================================================
+   PANTALLA DE CLAVE
+===================================================== */
+.login-card {
+    max-width: 500px;
+    margin: auto;
+    padding: 45px 30px;
+    background: rgba(255,255,255,.94);
+    border-radius: 30px;
+    box-shadow: 0 20px 60px var(--sombra);
+    backdrop-filter: blur(10px);
+    animation: aparecer .8s ease;
+}
+
+.big-heart {
+    font-size: 70px;
+    animation: latir 1.5s infinite;
+}
+
+@keyframes latir {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+}
+
+.login-card h1 {
+    font-size: 2.4rem;
+    color: var(--rojo);
+    margin: 15px 0;
+}
+
+.subtitle {
+    color: #865266;
+    margin-bottom: 30px;
+    line-height: 1.6;
+}
+
+.password-box {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.password-box input {
+    flex: 1;
+    padding: 16px;
+    border: 2px solid #ffd0de;
+    border-radius: 15px;
+    outline: none;
+    font-size: 18px;
+    text-align: center;
+}
+
+.password-box input:focus {
+    border-color: var(--rosa);
+}
+
+.main-btn {
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: 15px;
+    color: white;
+    background: linear-gradient(135deg, var(--rosa), var(--rojo));
+    box-shadow: 0 10px 25px rgba(230,57,99,.25);
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: .25s;
+}
+
+.main-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 30px rgba(230,57,99,.3);
+}
+
+.hint {
+    margin-top: 20px;
+    background: #fff4f7;
+    border: 1px dashed #ff9fba;
+    border-radius: 15px;
+    padding: 15px;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.error {
+    color: #d6284b;
+    margin-top: 12px;
+    min-height: 20px;
+}
+
+/* =====================================================
+   TÍTULOS
+===================================================== */
+.section-title {
+    font-size: 2.5rem;
+    color: var(--rojo);
+    margin-bottom: 10px;
+}
+
+.section-description {
+    margin-bottom: 30px;
+    color: #815064;
+    line-height: 1.6;
+}
+
+/* =====================================================
+   JUEGO DE MEMORIA
+===================================================== */
+.memory-board {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    max-width: 600px;
+    margin: auto;
+}
+
+.card {
+    height: 125px;
+    perspective: 1000px;
+    cursor: pointer;
+}
+
+.card-inner {
+    width: 100%;
+    height: 100%;
+    transition: transform .5s;
+    transform-style: preserve-3d;
+    position: relative;
+}
+
+.card.flipped .card-inner,
+.card.matched .card-inner {
+    transform: rotateY(180deg);
+}
+
+.card-front,
+.card-back {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    border-radius: 18px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 42px;
+    box-shadow: 0 8px 20px var(--sombra);
+}
+
+.card-front {
+    background: linear-gradient(135deg, #ff5f91, #d92d5c);
+    color: white;
+}
+
+.card-back {
+    background: white;
+    transform: rotateY(180deg);
+}
+
+.card.matched .card-back {
+    background: #ffe0ea;
+}
+
+.memory-status {
+    margin-top: 25px;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+/* =====================================================
+   CRUCIGRAMA
+===================================================== */
+.crossword-container {
+    background: rgba(255,255,255,.94);
+    padding: 25px;
+    border-radius: 25px;
+    box-shadow: 0 15px 50px var(--sombra);
+    animation: aparecer .7s ease;
+}
+
+.crossword {
+    display: grid;
+    grid-template-columns: repeat(10, 42px);
+    grid-template-rows: repeat(10, 42px);
+    justify-content: center;
+    gap: 3px;
+    margin: 20px auto;
+}
+
+.cell {
+    width: 42px;
+    height: 42px;
+    border: 1px solid #ffc0d2;
+    background: white;
+    position: relative;
+    border-radius: 4px;
+}
+
+.cell.black {
+    background: #542033;
+    border-color: #542033;
+}
+
+.cell input {
+    width: 100%;
+    height: 100%;
+    border: none;
+    outline: none;
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: var(--rojo);
+    background: transparent;
+}
+
+.cell.correct {
+    background: #d9f8e7;
+    border-color: #63c995;
+}
+
+.cell.wrong {
+    background: #ffe0e6;
+    border-color: #ff9aaa;
+}
+
+.word-list {
+    text-align: left;
+    max-width: 550px;
+    margin: 25px auto;
+    background: #fff7fa;
+    padding: 20px;
+    border-radius: 15px;
+}
+
+.word-list h3 {
+    color: var(--rojo);
+    margin-bottom: 15px;
+}
+
+.word-list ol {
+    padding-left: 25px;
+}
+
+.word-list li {
+    margin: 10px 0;
+    line-height: 1.5;
+}
+
+.word-list .words {
+    margin-top: 15px;
+    padding: 12px;
+    background: white;
+    border-radius: 10px;
+    color: #8b3653;
+    text-align: center;
+}
+
+/* =====================================================
+   SOBRE
+===================================================== */
+.letter-screen {
+    flex-direction: column;
+}
+
+.envelope {
+    width: 320px;
+    height: 210px;
+    position: relative;
+    margin: 50px auto;
+    cursor: pointer;
+    perspective: 1000px;
+}
+
+.envelope-body {
+    position: absolute;
+    inset: 0;
+    background: #ff6f9b;
+    border-radius: 10px;
+    box-shadow: 0 15px 40px rgba(180,30,80,.25);
+}
+
+.envelope-flap {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    border-left: 160px solid transparent;
+    border-right: 160px solid transparent;
+    border-top: 115px solid #ff9fba;
+    transform-origin: top;
+    transition: 1s;
+    z-index: 3;
+}
+
+.envelope.open .envelope-flap {
+    transform: rotateX(180deg);
+}
+
+.letter {
+    position: absolute;
+    width: 290px;
+    left: 15px;
+    bottom: 15px;
+    background: #fffdf8;
+    padding: 25px;
+    border-radius: 8px;
+    transition: 1s;
+    z-index: 2;
+    box-shadow: 0 5px 20px rgba(0,0,0,.1);
+    text-align: center;
+}
+
+.envelope.open .letter {
+    transform: translateY(-160px);
+}
+
+.letter h2 {
+    color: var(--rojo);
+    margin-bottom: 15px;
+}
+
+.letter p {
+    line-height: 1.7;
+    font-size: 15px;
+}
+
+/* =====================================================
+   CARTA FINAL
+===================================================== */
+.final-message {
+    display: none;
+    max-width: 700px;
+    margin: 100px auto 30px;
+    padding: 45px 30px;
+    background: rgba(255,255,255,.97);
+    border-radius: 30px;
+    box-shadow: 0 20px 60px var(--sombra);
+    animation: aparecer 1s ease;
+}
+
+.final-message.show {
+    display: block;
+}
+
+.final-message h1 {
+    color: var(--rojo);
+    font-size: 3rem;
+    margin-bottom: 25px;
+}
+
+.final-message p {
+    line-height: 1.9;
+    font-size: 19px;
+}
+
+.love {
+    font-size: 45px;
+    margin-top: 25px;
+    animation: latir 1.3s infinite;
+}
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+@media(max-width:650px) {
+    .login-card h1 { font-size: 1.8rem; }
+    .password-box { flex-direction: column; }
+    .password-box .main-btn { width: 100% !important; }
+    .memory-board { grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .card { height: 80px; }
+    .card-front, .card-back { font-size: 28px; border-radius: 12px; }
+    .crossword {
+        transform: scale(.75);
+        transform-origin: top center;
+        margin-bottom: -60px;
+    }
+    .section-title { font-size: 1.8rem; }
+    .final-message h1 { font-size: 2rem; }
+    .final-message p { font-size: 17px; }
+    .envelope { transform: scale(.9); }
+}
+</style>
+</head>
+
+<body>
+
+<!-- =====================================================
+     CORAZONES DE FONDO
+===================================================== -->
+<div class="hearts" id="hearts"></div>
+
+<!-- =====================================================
+     PANTALLA 1 - CLAVE
+===================================================== -->
+<section id="loginScreen" class="screen active">
+    <div class="container">
+        <div class="login-card">
+            <div class="big-heart">❤️</div>
+            <h1>Una pequeña sorpresa para ti</h1>
+            <p class="subtitle">
+                Solo la persona más especial del mundo puede entrar...
+            </p>
+            <div class="password-box">
+                <input type="password" id="password" placeholder="Introduce la clave">
+                <button class="main-btn" style="width:auto; padding:16px 22px;" onclick="checkPassword()">
+                    Entrar ❤️
+                </button>
+            </div>
+            <div class="error" id="error"></div>
+            <div class="hint">
+                💡 <strong>Pista:</strong><br>
+                Es la fecha más importante para nosotros ❤️
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- =====================================================
+     PANTALLA 2 - JUEGO DE MEMORIA
+===================================================== -->
+<section id="memoryScreen" class="screen">
+    <div class="container">
+        <h1 class="section-title">💕 Nuestro pequeño juego</h1>
+        <p class="section-description">
+            Encuentra todas las parejas para descubrir la siguiente sorpresa.
+        </p>
+        <div class="memory-board" id="memoryBoard"></div>
+        <div class="memory-status" id="memoryStatus">
+            Parejas encontradas: 0 / 8
+        </div>
+    </div>
+</section>
+
+<!-- =====================================================
+     PANTALLA 3 - CRUCIGRAMA
+===================================================== -->
+<section id="crosswordScreen" class="screen">
+    <div class="container">
+        <h1 class="section-title">🧩 Un último reto</h1>
+        <p class="section-description">
+            Completa las palabras que representan lo que siento por ti ❤️
+        </p>
+        <div class="crossword-container">
+            <div class="crossword" id="crossword"></div>
+            <div class="word-list">
+                <h3>💕 Pistas</h3>
+                <ol>
+                    <li>Lo que siento por ti.</li>
+                    <li>Lo que me encanta darte.</li>
+                    <li>Lo que provocas cuando te miro.</li>
+                    <li>Lo que eres para mí.</li>
+                </ol>
+                <div class="words">
+                    ❤️ AMOR &nbsp; • &nbsp;
+                    💋 BESOS &nbsp; • &nbsp;
+                    😊 SONRISA &nbsp; • &nbsp;
+                    💕 CARIÑO
+                </div>
+            </div>
+            <button class="main-btn" onclick="checkCrossword()">
+                💕 Comprobar respuestas
+            </button>
+            <p id="crosswordMessage" class="error"></p>
+        </div>
+    </div>
+</section>
+
+<!-- =====================================================
+     PANTALLA 4 - CARTA
+===================================================== -->
+<section id="letterScreen" class="screen letter-screen">
+    <div class="container">
+        <h1 class="section-title">💌 Has desbloqueado mi corazón</h1>
+        <p class="section-description">
+            Hay algo que quiero decirte...
+        </p>
+        <div class="envelope" id="envelope" onclick="openLetter()">
+            <div class="envelope-body"></div>
+            <div class="letter">
+                <h2>Para ti ❤️</h2>
+                <p>Mi amor...</p>
+            </div>
+            <div class="envelope-flap"></div>
+        </div>
+
+        <div class="final-message" id="finalMessage">
+            <h1>Te amo demasiado ❤️</h1>
+            <p>
+                Mi amor,
+                <br><br>
+                Quiero que sepas que eres una de las personas más importantes de mi vida.
+                <br><br>
+                Gracias por cada sonrisa, cada momento, cada abrazo, cada conversación y cada recuerdo que hemos construido.
+                <br><br>
+                No sé qué nos depare el futuro, pero sí sé algo:
+                quiero seguir creando momentos contigo.
+                <br><br>
+                Si pudiera elegir nuevamente a alguien para compartir todos estos momentos,
+                volvería a elegirte a ti.
+                <br><br>
+                Gracias por existir, por ser tú y por formar parte de mi vida.
+                <br><br>
+                ❤️ Te amo muchísimo, más de lo que estas palabras pueden explicar.
+            </p>
+            <div class="love">❤️ 💕 ❤️</div>
+        </div>
+    </div>
+</section>
+
+<script>
+/* =====================================================
+   CONFIGURACIÓN
+===================================================== */
+/*
+    🔐 CAMBIA AQUÍ LA CLAVE
+    Ejemplo: 14102024
+*/
+const CLAVE = "240812";
+
+/* =====================================================
+   CAMBIO DE PANTALLAS
+===================================================== */
+function showScreen(id) {
+    document.querySelectorAll(".screen").forEach(screen => {
+        screen.classList.remove("active");
+    });
+    document.getElementById(id).classList.add("active");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+/* =====================================================
+   COMPROBAR CLAVE
+===================================================== */
+function checkPassword() {
+    const password = document.getElementById("password").value.trim();
+    const error = document.getElementById("error");
+
+    if (password === CLAVE) {
+        error.textContent = "";
+        showScreen("memoryScreen");
+        createMemoryGame();
+    } else {
+        error.textContent = "❌ Esa no es la clave... intenta recordar nuestra fecha ❤️";
+    }
+}
+
+/* =====================================================
+   ENTER EN LA CLAVE
+===================================================== */
+document.getElementById("password").addEventListener("keydown", function(event) {
+    if (event.key === "Enter") {
+        checkPassword();
+    }
+});
+
+/* =====================================================
+   JUEGO DE MEMORIA
+===================================================== */
+const symbols = ["❤️", "💕", "💋", "🌹", "🥰", "💍", "😘", "💖"];
+
+let firstCard = null;
+let secondCard = null;
+let lockBoard = false;
+let matches = 0;
+
+function createMemoryGame() {
+    const board = document.getElementById("memoryBoard");
+    board.innerHTML = "";
+
+    // Reiniciar variables
+    firstCard = null;
+    secondCard = null;
+    lockBoard = false;
+    matches = 0;
+
+    // Crear pares y mezclar
+    const cards = [...symbols, ...symbols];
+    cards.sort(() => Math.random() - 0.5);
+
+    updateMemoryStatus();
+
+    cards.forEach(symbol => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+            <div class="card-inner">
+                <div class="card-front">❤️</div>
+                <div class="card-back">${symbol}</div>
+            </div>
+        `;
+        card.dataset.symbol = symbol;
+        card.addEventListener("click", () => flipCard(card));
+        board.appendChild(card);
+    });
+}
+
+function flipCard(card) {
+    if (lockBoard || card === firstCard || card.classList.contains("matched")) {
+        return;
+    }
+
+    card.classList.add("flipped");
+
+    if (!firstCard) {
+        firstCard = card;
+        return;
+    }
+
+    secondCard = card;
+    checkMatch();
+}
+
+function checkMatch() {
+    const isMatch = firstCard.dataset.symbol === secondCard.dataset.symbol;
+
+    if (isMatch) {
+        firstCard.classList.add("matched");
+        secondCard.classList.add("matched");
+        matches++;
+        updateMemoryStatus();
+        resetCards();
+
+        if (matches === symbols.length) {
+            setTimeout(() => {
+                alert("💕 ¡Encontraste todas las parejas! Ahora viene otro reto...");
+                showScreen("crosswordScreen");
+                createCrossword();
+            }, 800);
+        }
+    } else {
+        lockBoard = true;
+        setTimeout(() => {
+            firstCard.classList.remove("flipped");
+            secondCard.classList.remove("flipped");
+            resetCards();
+        }, 900);
+    }
+}
+
+function resetCards() {
+    firstCard = null;
+    secondCard = null;
+    lockBoard = false;
+}
+
+function updateMemoryStatus() {
+    document.getElementById("memoryStatus").textContent =
+        `Parejas encontradas: ${matches} / ${symbols.length}`;
+}
+
+/* =====================================================
+   CRUCIGRAMA
+===================================================== */
+
+/*
+    Palabras y posiciones (fila, columna)
+    IMPORTANTE: deben caber en la cuadrícula de 10x10
+    y no superponerse incorrectamente.
+    
+    AMOR     -> fila 1, col 3  (letras en col 3,4,5,6)
+    BESOS    -> fila 3, col 1  (letras en col 1,2,3,4,5)
+    SONRISA  -> fila 5, col 1  (letras en col 1,2,3,4,5,6,7)
+    CARIÑO   -> fila 7, col 2  (letras en col 2,3,4,5,6,7)
+*/
+const crosswordData = [
+    { word: "AMOR",    row: 1, col: 3 },
+    { word: "BESOS",   row: 3, col: 1 },
+    { word: "SONRISA", row: 5, col: 1 },
+    { word: "CARIÑO",  row: 7, col: 2 }
+];
+
+let crosswordCells = [];
+
+function createCrossword() {
+    const crossword = document.getElementById("crossword");
+    crossword.innerHTML = "";
+    crosswordCells = [];
+
+    // Crear grid 10x10 vacío
+    const grid = Array.from({ length: 10 }, () => Array(10).fill(null));
+
+    // Colocar palabras en el grid
+    crosswordData.forEach(item => {
+        const letters = [...item.word];
+        letters.forEach((letter, index) => {
+            const row = item.row;
+            const col = item.col + index;
+            if (row >= 0 && row < 10 && col >= 0 && col < 10) {
+                grid[row][col] = letter;
+            }
+        });
+    });
+
+    // Crear celdas visuales
+    for (let row = 0; row < 10; row++) {
+        for (let col = 0; col < 10; col++) {
+            const cell = document.createElement("div");
+            cell.className = "cell";
+
+            if (grid[row][col] === null) {
+                cell.classList.add("black");
+            } else {
+                const input = document.createElement("input");
+                input.type = "text";
+                input.maxLength = 1;
+                input.autocomplete = "off";
+                input.dataset.answer = grid[row][col];
+
+                input.addEventListener("input", function() {
+                    this.value = this.value.toUpperCase().replace(/[^A-ZÑ]/g, "");
+                });
+
+                input.addEventListener("keyup", function(event) {
+                    if (this.value && event.key !== "Backspace") {
+                        const inputs = [...document.querySelectorAll("#crossword input")];
+                        const index = inputs.indexOf(this);
+                        if (index < inputs.length - 1) {
+                            inputs[index + 1].focus();
+                        }
+                    }
+                });
+
+                cell.appendChild(input);
+                crosswordCells.push(input);
+            }
+
+            crossword.appendChild(cell);
+        }
+    }
+}
+
+/* =====================================================
+   COMPROBAR CRUCIGRAMA
+===================================================== */
+function checkCrossword() {
+    let correct = 0;
+    const total = crosswordCells.length;
+
+    crosswordCells.forEach(input => {
+        const respuesta = input.value.trim().toUpperCase();
+        const correcta = input.dataset.answer.toUpperCase();
+
+        if (respuesta === correcta) {
+            input.parentElement.classList.add("correct");
+            input.parentElement.classList.remove("wrong");
+            correct++;
+        } else {
+            input.parentElement.classList.add("wrong");
+            input.parentElement.classList.remove("correct");
+        }
+    });
+
+    const message = document.getElementById("crosswordMessage");
+
+    if (correct === total) {
+        message.style.color = "#159957";
+        message.textContent = "❤️ ¡Perfecto! Has completado el crucigrama. La última sorpresa te espera...";
+        setTimeout(() => {
+            showScreen("letterScreen");
+        }, 1800);
+    } else {
+        message.style.color = "#d6284b";
+        message.textContent = `💕 Casi... tienes ${correct} de ${total} letras correctas.`;
+    }
+}
+
+/* =====================================================
+   ABRIR CARTA
+===================================================== */
+function openLetter() {
+    const envelope = document.getElementById("envelope");
+    envelope.classList.add("open");
+
+    setTimeout(() => {
+        document.getElementById("finalMessage").classList.add("show");
+        createHeartExplosion();
+    }, 1200);
+}
+
+/* =====================================================
+   CORAZONES FLOTANDO
+===================================================== */
+function createFloatingHeart() {
+    const container = document.getElementById("hearts");
+    const heart = document.createElement("div");
+    heart.className = "heart";
+
+    const emojis = ["❤️", "💕", "💗", "💖", "💘"];
+    heart.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+
+    heart.style.left = Math.random() * 100 + "%";
+    heart.style.animationDuration = (5 + Math.random() * 6) + "s";
+    heart.style.fontSize = (15 + Math.random() * 25) + "px";
+
+    container.appendChild(heart);
+
+    setTimeout(() => {
+        heart.remove();
+    }, 12000);
+}
+
+setInterval(createFloatingHeart, 700);
+
+/* =====================================================
+   EXPLOSIÓN DE CORAZONES
+===================================================== */
+function createHeartExplosion() {
+    const emojis = ["❤️", "💕", "💖", "💗", "💘", "🥰", "😘"];
+
+    for (let i = 0; i < 40; i++) {
+        setTimeout(() => {
+            const heart = document.createElement("div");
+            heart.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+            heart.style.position = "fixed";
+            heart.style.left = "50%";
+            heart.style.top = "50%";
+            heart.style.zIndex = "9999";
+            heart.style.fontSize = (20 + Math.random() * 30) + "px";
+            heart.style.pointerEvents = "none";
+            document.body.appendChild(heart);
+
+            const x = (Math.random() - 0.5) * 800;
+            const y = (Math.random() - 0.5) * 800;
+
+            heart.animate(
+                [
+                    { transform: "translate(-50%,-50%) scale(0)", opacity: 1 },
+                    { transform: `translate(${x}px,${y}px) scale(1.5)`, opacity: 0 }
+                ],
+                { duration: 1800, easing: "ease-out" }
+            );
+
+            setTimeout(() => {
+                heart.remove();
+            }, 1800);
+        }, i * 50);
+    }
+}
+</script>
+
+</body>
+</html>
